@@ -1,0 +1,23 @@
+# Demo (no token needed):     docker compose up --build   → http://localhost:3000
+# Live bot:                   cp .env.example .env, fill in the bot token, set DEMO_MODE=false
+# Register slash commands:    docker compose run --rm bot node dist/scripts/register-commands.js
+services:
+  bot:
+    build: .
+    image: server-toolkit:local
+    init: true
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DEMO_MODE: ${DEMO_MODE:-true}
+    ports:
+      # Bound to localhost: put a reverse proxy with TLS in front before exposing it.
+      - "127.0.0.1:${DASHBOARD_PORT:-3000}:3000"
+    volumes:
+      - toolkit-data:/data
+    stop_grace_period: 15s
+
+volumes:
+  toolkit-data:

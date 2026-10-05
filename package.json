@@ -21,8 +21,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "check": "npm run lint && npm run typecheck && npm test && npm run build",
-    "screenshots": "node scripts/screenshots.mjs"
+    "check": "npm run lint && npm run typecheck && npm test && npm run build && npm run smoke",
+    "screenshots": "node scripts/screenshots.mjs",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.3",
