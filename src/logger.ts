@@ -27,7 +27,7 @@ export function createLogger(opts: { level?: string; format?: 'pretty' | 'json' 
   if (opts.format === 'pretty' && prettyAvailable()) {
     options.transport = {
       target: 'pino-pretty',
-      options: { colorize: true, translateTime: 'HH:MM:ss', ignore: 'pid,hostname,service' },
+      options: { colorize: true, singleLine: true, translateTime: 'HH:MM:ss', ignore: 'pid,hostname,service' },
     }
   }
   return pino(options)
