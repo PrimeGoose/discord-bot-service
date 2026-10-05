@@ -12,6 +12,11 @@ services:
         required: false
     environment:
       DEMO_MODE: ${DEMO_MODE:-true}
+      # Container-specific values win over whatever .env says (.env.example targets local dev).
+      DATABASE_PATH: /data/toolkit.db
+      DASHBOARD_HOST: 0.0.0.0
+      DASHBOARD_PORT: "3000"
+      LOG_FORMAT: json
     ports:
       # Bound to localhost: put a reverse proxy with TLS in front before exposing it.
       - "127.0.0.1:${DASHBOARD_PORT:-3000}:3000"
