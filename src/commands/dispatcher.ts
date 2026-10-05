@@ -45,12 +45,7 @@ export class Dispatcher {
     }
     const durationMs = Math.round(performance.now() - started)
 
-    let subcommand: string | null = null
-    try {
-      subcommand = ctx.options.getSubcommand()
-    } catch {
-      // commands without subcommands
-    }
+    const subcommand = ctx.options.getSubcommand()
     try {
       ctx.store.stats.recordCommand({
         guildId: ctx.guild?.id ?? null,
