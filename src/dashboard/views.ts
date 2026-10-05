@@ -61,10 +61,10 @@ td{padding:10px;border-bottom:1px solid #35373c;vertical-align:middle}tr:last-ch
 .meter-bg{fill:#1e1f22}.meter-fg{fill:var(--brand)}
 code{background:#1e1f22;border-radius:4px;padding:2px 6px;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .ok{color:var(--green)}.fail{color:var(--red)}.badge{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--panel2);color:var(--muted)}
-.log td{padding:7px 10px;font-size:13px}
+.log td{padding:7px 10px;font-size:13px}.nowrap{white-space:nowrap}.table-wrap{overflow-x:auto}
 footer{max-width:1280px;margin:0 auto;padding:0 32px 32px;color:var(--dim);font-size:12px;display:flex;gap:16px;flex-wrap:wrap}
 @media (max-width:1100px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.grid2{grid-template-columns:1fr}}
-@media (max-width:640px){header{padding:14px 16px;flex-wrap:wrap}main{padding:16px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.hide-sm{display:none}.meta{text-align:left;width:100%}}
+@media (max-width:640px){header{padding:14px 16px;flex-wrap:wrap}main{padding:16px}td,th{padding:8px 6px}.log td{white-space:nowrap}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.hide-sm{display:none}.meta{text-align:left;width:100%}}
 `
 
 export function renderDashboard(d: DashboardData, nonce: string) {
@@ -112,12 +112,12 @@ export function renderDashboard(d: DashboardData, nonce: string) {
     <div class="card">
       <h2>Command usage <span class="sub">last 7 days</span></h2>
       <table>
-        <thead><tr><th>Command</th><th class="hide-sm"></th><th class="num">Uses</th><th class="num">Avg ms</th></tr></thead>
+        <thead><tr><th>Command</th><th class="hide-sm"></th><th class="num">Uses</th><th class="num nowrap">Avg ms</th></tr></thead>
         <tbody>
         ${d.commandUsage.map(
           (c) => html`<tr>
-            <td><code>/${c.command}</code>${c.failures > 0 ? html` <span class="badge" title="failed runs">${c.failures} err</span>` : ''}</td>
-            <td class="hide-sm">${raw(meterSvg(c.uses / maxUses, 110))}</td>
+            <td class="nowrap"><code>/${c.command}</code>${c.failures > 0 ? html` <span class="badge" title="failed runs in the last 7 days">${c.failures} err</span>` : ''}</td>
+            <td class="hide-sm">${raw(meterSvg(c.uses / maxUses, 90))}</td>
             <td class="num">${n(c.uses)}</td><td class="num">${c.avgMs}</td></tr>`,
         )}
         </tbody>
@@ -127,12 +127,12 @@ export function renderDashboard(d: DashboardData, nonce: string) {
 
   <section class="card" style="margin-bottom:16px">
     <h2>Servers <span class="sub">the bot is currently in</span></h2>
-    <table>
+    <div class="table-wrap"><table>
       <thead><tr><th>Server</th><th class="num">Members</th><th class="num">Messages · 7d</th><th class="hide-sm">14-day trend</th><th class="num">Commands · 7d</th><th class="num hide-sm">Reminders</th><th class="num hide-sm">Polls</th><th class="num hide-sm">Joined</th></tr></thead>
       <tbody>
       ${d.guilds.map(
         (g) => html`<tr>
-          <td><div class="guild"><div class="avatar" style="background:hsl(${hue(g.id)} 55% 45%)">${initials(g.name)}</div><div><strong>${g.name}</strong><div class="sub">${g.id}</div></div></div></td>
+          <td><div class="guild"><div class="avatar" style="background:hsl(${hue(g.name)} 55% 45%)">${initials(g.name)}</div><div><strong>${g.name}</strong><div class="sub hide-sm">${g.id}</div></div></div></td>
           <td class="num">${n(g.memberCount)}</td>
           <td class="num">${n(g.messages7d)}</td>
           <td class="hide-sm">${raw(sparklineSvg(g.trend))}</td>
@@ -142,12 +142,12 @@ export function renderDashboard(d: DashboardData, nonce: string) {
           <td class="num hide-sm">${ago(g.joinedAt, d.generatedAt)}</td></tr>`,
       )}
       </tbody>
-    </table>
+    </table></div>
   </section>
 
   <section class="card">
     <h2>Recent commands</h2>
-    <table class="log">
+    <div class="table-wrap"><table class="log">
       <thead><tr><th>When</th><th>Server</th><th>Command</th><th>Status</th><th class="num">Latency</th></tr></thead>
       <tbody>
       ${d.recent.map(
@@ -159,7 +159,7 @@ export function renderDashboard(d: DashboardData, nonce: string) {
           <td class="num">${r.durationMs} ms</td></tr>`,
       )}
       </tbody>
-    </table>
+    </table></div>
   </section>
 </main>
 <footer>

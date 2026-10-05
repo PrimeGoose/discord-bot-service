@@ -55,7 +55,7 @@ export function renderPoll({ poll, counts, total }: PollResults, now: number): C
   const embed = new EmbedBuilder()
     .setColor(closed ? COLORS.neutral : COLORS.brand)
     .setTitle(`📊 ${escapeMarkdown(poll.question)}`)
-    .setDescription(`${lines.join('\n\n')}\n\n${status} · ${plural(total, 'vote')} total`)
+    .setDescription(`${lines.join('\n')}\n\n${status} · ${plural(total, 'vote')} total`)
     .setFooter({ text: `Poll #${poll.id} · one vote per member, click again to change it` })
 
   if (closed) return { embeds: [embed], components: [] }

@@ -30,6 +30,7 @@ export function renderMarkup(text: string, opts: RenderOptions): string {
     .replace(/<@!?(\d+)>/g, (_, id: string) => style(color, '38;5;111', `@${users.get(id) ?? id}`))
     .replace(/\*\*(.+?)\*\*/g, (_, inner: string) => style(color, '1', inner))
     .replace(/^-# (.*)$/gm, (_, inner: string) => style(color, '2', inner))
+    .replace(/`([^`\n]+)`/g, (_, inner: string) => style(color, '38;5;180', inner))
     .replace(/\\([*_`~|>])/g, '$1')
 }
 

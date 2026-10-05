@@ -50,7 +50,7 @@ export function activityChart(points: { day: string; messages: number; commands:
   const labelEvery = Math.ceil(n / 8)
   const labels = points
     .map((p, i) =>
-      i % labelEvery === 0 || i === n - 1
+      (i % labelEvery === 0 && n - 1 - i >= labelEvery / 2) || i === n - 1
         ? `<text x="${(pad.left + i * slot + slot / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle" class="axis">${shortDay(p.day)}</text>`
         : '',
     )

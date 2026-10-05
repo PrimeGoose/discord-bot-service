@@ -73,6 +73,7 @@ export function seedDemoData(store: Store, now: number, days = 30, seed = 2026):
       const memberPool = FIXTURE_USERS.slice(0, Math.max(6, Math.min(FIXTURE_USERS.length, Math.round(g.memberCount / 80))))
       for (let d = days - 1; d >= 0; d--) {
         const at = now - d * DAY_MS
+        const dayStart = at - (at % DAY_MS)
         const weekday = new Date(at).getUTCDay()
         const weekend = weekday === 0 || weekday === 6 ? 1.35 : 1
         const growth = 0.75 + 0.25 * ((days - d) / days) // gentle upward trend
@@ -100,7 +101,7 @@ export function seedDemoData(store: Store, now: number, days = 30, seed = 2026):
             subcommand,
             success: rand() > 0.015,
             durationMs: Math.round(2 + rand() * (command === 'stats' ? 28 : 9)),
-            usedAt: Math.min(now - 60_000, at - Math.floor(rand() * DAY_MS * 0.9)),
+            usedAt: dayStart + Math.floor(rand() * (Math.min(now - 60_000, dayStart + DAY_MS) - dayStart)),
           })
           summary.commands++
         }
