@@ -196,3 +196,19 @@ describe('StatsRepository', () => {
     ])
   })
 })
+
+describe('nested transactions', () => {
+  it('rolls back only the inner savepoint when it fails', () => {
+    store.db.transaction(() => {
+      store.guilds.upsert({ id: 'outer', name: 'Outer', memberCount: 1 }, NOW)
+      expect(() =>
+        store.db.transaction(() => {
+          store.guilds.upsert({ id: 'inner', name: 'Inner', memberCount: 1 }, NOW)
+          throw new Error('inner failure')
+        }),
+      ).toThrow('inner failure')
+    })
+    expect(store.guilds.get('outer')).toBeDefined()
+    expect(store.guilds.get('inner')).toBeUndefined()
+  })
+})

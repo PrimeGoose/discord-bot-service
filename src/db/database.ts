@@ -13,6 +13,7 @@ export type Params = Record<string, SQLInputValue>
 export class Database {
   readonly raw: DatabaseSync
   private readonly statements = new Map<string, StatementSync>()
+  private depth = 0
 
   constructor(path: string) {
     if (path !== ':memory:') mkdirSync(dirname(path), { recursive: true })
@@ -36,14 +37,19 @@ export class Database {
     return this.statement(sql).all(params) as T[]
   }
 
+  /** Runs `fn` atomically. Nested calls become savepoints, so repositories can compose. */
   transaction<T>(fn: () => T): T {
-    this.raw.exec('BEGIN IMMEDIATE')
+    const savepoint = `sp_${this.depth}`
+    this.raw.exec(this.depth === 0 ? 'BEGIN IMMEDIATE' : `SAVEPOINT ${savepoint}`)
+    this.depth++
     try {
       const result = fn()
-      this.raw.exec('COMMIT')
+      this.depth--
+      this.raw.exec(this.depth === 0 ? 'COMMIT' : `RELEASE ${savepoint}`)
       return result
     } catch (error) {
-      this.raw.exec('ROLLBACK')
+      this.depth--
+      this.raw.exec(this.depth === 0 ? 'ROLLBACK' : `ROLLBACK TO ${savepoint}; RELEASE ${savepoint}`)
       throw error
     }
   }
